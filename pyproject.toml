@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "clickhouse-connect>=1.4.1",
     "duckdb==1.5.4",
     "numpy>=2.5.0",
     "pandas>=3.0.3",

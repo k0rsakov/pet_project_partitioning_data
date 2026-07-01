@@ -13,3 +13,12 @@ services:
       interval: 10s  
       timeout: 5s  
       retries: 5
+
+  ch:
+    image: clickhouse/clickhouse-server:26.4.1
+    container_name: ch
+    ports:
+      - "8123:8123"
+    environment:
+      CLICKHOUSE_USER: click
+      CLICKHOUSE_PASSWORD: click

@@ -111,9 +111,9 @@ sampled_dates AS (
 base AS (
     SELECT
         fakeit_uuid_v4() AS order_id,
-        cp.uuids[(random() * {CUSTOMER_POOL})::INT + 1] AS customer_id,
-        ep.uuids[(random() * {EMPLOYEE_POOL})::INT + 1] AS employee_id,
-        ctp.uuids[(random() * {CITY_POOL})::INT + 1] AS ship_city_id,
+        cp.uuids[(random() * {CUSTOMER_POOL})::INT % {CUSTOMER_POOL} + 1] AS customer_id,
+        ep.uuids[(random() * {EMPLOYEE_POOL})::INT % {EMPLOYEE_POOL} + 1] AS employee_id,
+        ctp.uuids[(random() * {CITY_POOL})::INT % {CITY_POOL} + 1] AS ship_city_id,
         (random() * 6)::INT + 1 AS ship_id,
         sd.order_date AS order_date,
         random() AS ship_roll,

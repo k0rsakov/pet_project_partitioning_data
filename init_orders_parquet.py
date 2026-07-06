@@ -1,4 +1,6 @@
+import random
 from datetime import date
+
 import duckdb
 
 con = duckdb.connect()
@@ -22,14 +24,58 @@ DATE_TO = date(2026, 1, 1)
 # Количество дней вычисляется автоматически — не нужно считать вручную
 DATE_RANGE_DAYS = (DATE_TO - DATE_FROM).days
 
-# Веса сезонности (1.0 = базовый уровень, >1.0 = пик, <1.0 = спад)
-WEIGHT_NEW_YEAR = 3.0  # 20 дек — 10 янв: новогодний пик
-WEIGHT_MARCH_8 = 1.6  # 1–8 марта: 8 марта
-WEIGHT_FEB_14 = 1.4  # 10–14 февраля: 14 февраля
-WEIGHT_FEB_23 = 1.3  # 20–23 февраля: 23 февраля
-WEIGHT_SCHOOL = 1.3  # 15–31 августа: подготовка к школе
-WEIGHT_SUMMER = 0.75  # июнь–июль: летний спад
-WEIGHT_BASE = 1.0  # всё остальное
+# ---------------------------------------------------------------------------
+# Глобальные переменные — веса сезонности
+# ---------------------------------------------------------------------------
+WEIGHT_NEW_YEAR = 3.0   # 20 дек — 10 янв: новогодний пик
+WEIGHT_MARCH_8 = 1.6    # 1–8 марта: 8 марта
+WEIGHT_FEB_14 = 1.4     # 10–14 февраля: 14 февраля
+WEIGHT_FEB_23 = 1.3     # 20–23 февраля: 23 февраля
+WEIGHT_SCHOOL = 1.3     # 15–31 августа: подготовка к школе
+WEIGHT_SUMMER = 0.75    # июнь–июль: летний спад
+WEIGHT_BASE = 1.0       # всё остальное
+
+# ---------------------------------------------------------------------------
+# Глобальные переменные — рост amount
+# ---------------------------------------------------------------------------
+INFLATION_MIN = 0.03    # минимальная годовая инфляция
+INFLATION_MAX = 0.07    # максимальная годовая инфляция
+GROWTH_RATE_MIN = 0.11  # минимальный рост бизнеса YoY сверх инфляции
+GROWTH_RATE_MAX = 0.23  # максимальный рост бизнеса YoY сверх инфляции
+
+# ---------------------------------------------------------------------------
+# Расчёт накопленных множителей роста по годам
+# Убери random.seed(42) для "чистого" рандома при каждом запуске
+# ---------------------------------------------------------------------------
+random.seed(42)
+
+years = range(DATE_FROM.year, DATE_TO.year + 1)
+range_in_years = DATE_TO.year - DATE_FROM.year
+
+if range_in_years <= 1:
+    multipliers = {year: 1.0 for year in years}
+else:
+    multipliers = {}
+    cumulative = 1.0
+    for year in years:
+        multipliers[year] = round(cumulative, 6)
+        inflation = random.uniform(INFLATION_MIN, INFLATION_MAX)
+        growth = random.uniform(GROWTH_RATE_MIN, GROWTH_RATE_MAX)
+        total_growth = inflation + growth
+        cumulative *= (1 + total_growth)
+        print(
+            f"{year}: "
+            f"инфляция={inflation:.1%}, "
+            f"рост={growth:.1%}, "
+            f"итого={total_growth:.1%}, "
+            f"множитель={multipliers[year]:.4f}"
+        )
+
+# Формируем CASE WHEN для подстановки в SQL
+multiplier_case = "CASE EXTRACT(YEAR FROM order_date)::INT\n"
+for year, mult in multipliers.items():
+    multiplier_case += f"    WHEN {year} THEN {mult}\n"
+multiplier_case += "    ELSE 1.0\nEND"
 
 # ---------------------------------------------------------------------------
 # Справочник способов доставки
@@ -174,7 +220,11 @@ SELECT
         WHEN receipt_date_raw <= shipped_date THEN shipped_date + INTERVAL 1 SECOND
         ELSE receipt_date_raw
     END AS receipt_date,
-    ROUND(POWER(10, 1 + random() * (LOG10(500000) - 1)), 2) AS amount
+    -- Применяем накопленный множитель роста по году
+    ROUND(
+        POWER(10, 1 + random() * (LOG10(500000) - 1)) * ({multiplier_case}),
+        2
+    ) AS amount
 FROM with_receipt_date
 """)
 

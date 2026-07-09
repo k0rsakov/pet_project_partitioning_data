@@ -26,3 +26,20 @@ uv run jupyter lab
 ```bash
 docker-compose up -d
 ```
+
+### Как воссоздать демо-стенд
+
+1) Создать виртуальное окружение через `uv`
+2) Выполнить код [init_orders_parquet.py](init_orders_parquet.py)
+    - Можете параметризировать его самостоятельно
+3) Поднять инфраструктуру
+4) Создать подключение к БД через DBeaver или другой обозреватель
+5) Выполнить DDL команды в каждой из БД на основании имени:
+    - В PostgreSQL — [DDL_PG.sql](sql_ddl/DDL_PG.sql)
+    - В ClickHouse — [DDL_CH.sql](sql_ddl/DDL_CH.sql)
+6) У вас будут созданы все таблицы необходимы для своих исследований
+7) Выполнить DML код для каждой из БД на основании имени:
+    - Для PostgreSQL — [init_orders_pg.py](init_orders_pg.py)
+    - Для ClickHouse — [init_orders_ch.py](init_orders_ch.py)
+8) У вас будет заполнена таблица `orders` в каждой из БД на основании
+   скрипта [init_orders_parquet.py](init_orders_parquet.py)

@@ -37,7 +37,7 @@ docker-compose up -d
 5) Выполнить DDL команды в каждой из БД на основании имени:
     - В PostgreSQL — [DDL_PG.sql](sql_ddl/DDL_PG.sql)
     - В ClickHouse — [DDL_CH.sql](sql_ddl/DDL_CH.sql)
-6) У вас будут созданы все таблицы необходимы для своих исследований
+6) У вас будут созданы все таблицы необходимые для исследования
 7) Выполнить DML код для каждой из БД на основании имени:
     - Для PostgreSQL — [init_orders_pg.py](init_orders_pg.py)
     - Для ClickHouse — [init_orders_ch.py](init_orders_ch.py)

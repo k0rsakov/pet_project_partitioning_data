@@ -43,3 +43,17 @@ docker-compose up -d
     - Для ClickHouse — [init_orders_ch.py](init_orders_ch.py)
 8) У вас будет заполнена таблица `orders` в каждой из БД на основании
    скрипта [init_orders_parquet.py](init_orders_parquet.py)
+
+## Полезные ссылки
+
+- [Northwind ER](https://github.com/pthom/northwind_psql/blob/master/ER.png)
+  - [Как запустить базу данных для обучения. Практическое видео на PostgreSQL](https://youtu.be/NFJbDist6Do)
+- PostgreSQL
+  - [Postgres EXPLAIN Visualizer (tatiyants)](http://tatiyants.com/pev/#/plans)
+  - [5.11. Секционирование таблиц](https://postgrespro.ru/docs/postgresql/16/ddl-partitioning?lang=ru)
+- ClickHouse
+  - [ClickHouse table partitions](https://clickhouse.com/docs/concepts/core-concepts/partitions)
+  - [Custom Partitioning Key](https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/custom-partitioning-key)
+  - [system.parts](https://clickhouse.com/docs/reference/system-tables/parts)
+  - [How can I do partitioned writes by year and month on S3?](https://clickhouse.com/docs/resources/support-center/knowledge-base/data-import-export/s3-export-data-year-month-folders)
+  - [External disks for storing data](https://clickhouse.com/docs/concepts/features/configuration/server-config/storing-data)

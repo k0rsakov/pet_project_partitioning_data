@@ -18,8 +18,8 @@ services:
     image: clickhouse/clickhouse-server:26.4.1
     container_name: ch
     ports:
-      - "8123:8123"   # HTTP
-      - "9100:9000"   # native TCP, снаружи 9100, чтобы не пересекаться с MinIO
+      - "8123:8123"
+      - "9100:9000"
     environment:
       CLICKHOUSE_USER: click
       CLICKHOUSE_PASSWORD: click

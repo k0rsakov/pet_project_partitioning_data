@@ -1,24 +1,25 @@
 services:
-  postgres:  
-    image: postgres:16  
+  postgres:
+    image: postgres:16
     container_name: postgres
-    environment:  
-      POSTGRES_USER: postgres  
-      POSTGRES_PASSWORD: postgres  
-      POSTGRES_DB: postgres  
-    ports:  
-      - "5432:5432"  
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]  
-      interval: 10s  
-      timeout: 5s  
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
       retries: 5
 
   ch:
     image: clickhouse/clickhouse-server:26.4.1
     container_name: ch
     ports:
-      - "8123:8123"
+      - "8123:8123"   # HTTP
+      - "9100:9000"   # native TCP, снаружи 9100, чтобы не пересекаться с MinIO
     environment:
       CLICKHOUSE_USER: click
       CLICKHOUSE_PASSWORD: click
